@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Extension point for project-specific checks once a runtime/toolchain exists.
-# Keep this deterministic and fail-fast when commands are added.
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py'
 
-printf "check-project: no project-specific checks configured (OK)\n"
-
+printf "check-project: unittest discover OK\n"
