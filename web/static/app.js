@@ -15,6 +15,12 @@ const workflowMap = document.querySelector("#workflow-map");
 const userInterventions = [];
 let lastSource = "";
 
+const defaultStages = [
+  { name: "Market Research", summary: "Audience, channel, and competitive signals.", status: "pending" },
+  { name: "Campaign Orchestration", summary: "Campaign sequence, offer, and required materials.", status: "pending" },
+  { name: "Content Generation", summary: "Text, image, and video briefs ready for editing.", status: "pending" },
+];
+
 function setBusy(isBusy) {
   generateButton.disabled = isBusy;
   regenerateButton.disabled = isBusy;
@@ -31,10 +37,12 @@ function renderFeedback() {
 }
 
 function renderStages(stages = []) {
+  const visibleStages = stages.length ? stages : defaultStages;
   stageStrip.innerHTML = "";
-  stages.forEach((stage) => {
+  visibleStages.forEach((stage) => {
     const item = document.createElement("article");
     item.className = "stage-item";
+    item.dataset.status = stage.status;
     const title = document.createElement("strong");
     title.textContent = stage.name;
     const summary = document.createElement("span");
@@ -42,7 +50,7 @@ function renderStages(stages = []) {
     item.append(title, summary);
     stageStrip.appendChild(item);
   });
-  drawWorkflowMap(stages);
+  drawWorkflowMap(visibleStages);
 }
 
 function renderMetrics(plan) {
@@ -137,41 +145,70 @@ function drawWorkflowMap(stages = []) {
   const width = workflowMap.width;
   const height = workflowMap.height;
   context.clearRect(0, 0, width, height);
-  context.fillStyle = "#edf5f4";
+  context.fillStyle = "#120706";
   context.fillRect(0, 0, width, height);
 
-  const nodes = stages.length ? stages : [
-    { name: "Market Research", status: "pending" },
-    { name: "Campaign Orchestration", status: "pending" },
-    { name: "Content Generation", status: "pending" },
-  ];
-  const gap = width / (nodes.length + 1);
+  context.strokeStyle = "rgba(255, 244, 200, 0.08)";
+  context.lineWidth = 1;
+  for (let x = 0; x <= width; x += 46) {
+    context.beginPath();
+    context.moveTo(x, 0);
+    context.lineTo(x, height);
+    context.stroke();
+  }
+  for (let y = 0; y <= height; y += 26) {
+    context.beginPath();
+    context.moveTo(0, y);
+    context.lineTo(width, y);
+    context.stroke();
+  }
 
-  context.lineWidth = 5;
-  context.strokeStyle = "#87aaa5";
+  const nodes = stages.length ? stages : defaultStages;
+  const gap = width / (nodes.length + 1);
+  const centerY = Math.round(height * 0.48);
+
+  context.lineWidth = 2;
+  context.strokeStyle = "rgba(216, 255, 99, 0.48)";
   context.beginPath();
-  context.moveTo(gap, height / 2);
-  context.lineTo(width - gap, height / 2);
+  context.moveTo(gap, centerY);
+  context.lineTo(width - gap, centerY);
   context.stroke();
 
   nodes.forEach((stage, index) => {
     const x = gap * (index + 1);
     const complete = stage.status === "complete";
+    const nodeWidth = 138;
+    const nodeHeight = 62;
+    const y = centerY - nodeHeight / 2;
+    context.fillStyle = complete ? "rgba(216, 255, 99, 0.16)" : "rgba(255, 244, 200, 0.06)";
+    context.strokeStyle = complete ? "#d8ff63" : "rgba(255, 244, 200, 0.48)";
+    context.lineWidth = 1.5;
     context.beginPath();
-    context.fillStyle = complete ? "#0f766e" : "#ffffff";
-    context.strokeStyle = complete ? "#0f766e" : "#87aaa5";
-    context.arc(x, height / 2, 26, 0, Math.PI * 2);
+    context.rect(x - nodeWidth / 2, y, nodeWidth, nodeHeight);
     context.fill();
     context.stroke();
-    context.fillStyle = complete ? "#ffffff" : "#17202a";
-    context.font = "700 17px system-ui";
+
+    context.fillStyle = complete ? "#d8ff63" : "#7dd7ff";
+    context.fillRect(x - nodeWidth / 2 + 11, y + 12, 8, 8);
+    context.fillStyle = "#fff4c8";
+    context.font = "700 13px monospace";
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.fillText(String(index + 1), x, height / 2);
-    context.fillStyle = "#17202a";
-    context.font = "700 14px system-ui";
-    context.fillText(stage.name, x, height / 2 + 48);
+    context.fillText(`0${index + 1}`, x, y + 22);
+    context.fillStyle = "rgba(255, 244, 200, 0.72)";
+    context.font = "700 12px monospace";
+    context.fillText(stage.name.toUpperCase(), x, y + 43);
   });
+
+  context.fillStyle = "rgba(255, 244, 200, 0.74)";
+  context.font = "700 12px monospace";
+  context.textAlign = "left";
+  context.fillText("AGENT WORKFLOW MAP", 24, 30);
+  context.fillStyle = "rgba(216, 255, 99, 0.78)";
+  context.fillText("SIGNAL: MONETIZATION", 24, height - 26);
+  context.fillStyle = "rgba(125, 215, 255, 0.72)";
+  context.textAlign = "right";
+  context.fillText("USER FEEDBACK LOOP ENABLED", width - 24, height - 26);
 }
 
 form.addEventListener("submit", (event) => {
@@ -181,4 +218,4 @@ form.addEventListener("submit", (event) => {
 
 regenerateButton.addEventListener("click", generatePlan);
 addFeedbackButton.addEventListener("click", addFeedback);
-drawWorkflowMap();
+renderStages();

@@ -9,10 +9,24 @@
   <body>
     <main class="app-shell">
       <section class="workspace" aria-labelledby="app-title">
-        <div class="control-panel">
-          <div>
+        <header class="top-bar">
+          <a class="brand-mark" href="/" aria-label="ContentAgent home">
+            <span class="brand-icon" aria-hidden="true">CA</span>
+            <span>ContentAgent</span>
+          </a>
+          <nav class="top-nav" aria-label="Workspace sections">
+            <a href="#source-form">Source</a>
+            <a href="#stage-strip">Stages</a>
+            <a href="#plan-editor">Plan</a>
+          </nav>
+          <span class="system-status">Local deterministic adapter</span>
+        </header>
+
+        <div class="hero-panel">
+          <div class="hero-copy">
             <p class="eyebrow">Marketing Agent</p>
             <h1 id="app-title">Monetization plan builder</h1>
+            <p class="hero-summary">Turn a repository or product URL into a monetization-focused campaign plan with visible stages and editable output.</p>
           </div>
 
           <form id="source-form" class="source-form">
@@ -29,7 +43,9 @@
               <button type="submit" id="generate-button">Generate</button>
             </div>
           </form>
+        </div>
 
+        <div class="control-panel">
           <div class="feedback-panel" aria-labelledby="feedback-title">
             <h2 id="feedback-title">User Intervention</h2>
             <label for="stage-select">Generation Stage</label>
@@ -43,19 +59,21 @@
             <button type="button" id="add-feedback-button">Add feedback</button>
             <ul id="feedback-list" class="feedback-list" aria-live="polite"></ul>
           </div>
+
+          <section class="summary-panel" aria-labelledby="summary-title">
+            <h2 id="summary-title">Plan Summary</h2>
+            <p id="status-line">Enter a Software Source to generate a Marketing Plan.</p>
+            <dl id="plan-metrics" class="plan-metrics"></dl>
+          </section>
         </div>
 
         <div class="plan-panel">
           <div class="stage-strip" id="stage-strip" aria-label="Generation stages"></div>
-          <canvas id="workflow-map" width="920" height="180" aria-label="Marketing Agent workflow map"></canvas>
+          <figure class="visual-panel">
+            <canvas id="workflow-map" width="920" height="260" aria-label="Marketing Agent workflow map"></canvas>
+          </figure>
 
           <div class="result-grid">
-            <section class="summary-panel" aria-labelledby="summary-title">
-              <h2 id="summary-title">Plan Summary</h2>
-              <p id="status-line">Enter a Software Source to generate a Marketing Plan.</p>
-              <dl id="plan-metrics" class="plan-metrics"></dl>
-            </section>
-
             <section class="editor-panel" aria-labelledby="editor-title">
               <div class="editor-heading">
                 <h2 id="editor-title">Editable Marketing Plan</h2>
