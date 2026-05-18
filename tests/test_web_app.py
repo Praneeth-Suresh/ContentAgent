@@ -60,7 +60,16 @@ class WebAppIntegrationTests(unittest.TestCase):
         self.assertEqual(plan["software_source"]["product_name"], "Revenue Dashboard")
         self.assertEqual(
             [stage["name"] for stage in plan["generation_stages"]],
-            ["Market Research", "Campaign Orchestration", "Content Generation"],
+            [
+                "Market Research",
+                "Campaign Orchestration",
+                "Monetization Experiment",
+                "Content Generation",
+            ],
+        )
+        self.assertGreaterEqual(
+            len(plan["monetization_experiment"]["ranked_recommendations"]),
+            3,
         )
         self.assertIn("Prioritize finance teams", plan["editable_markdown"])
 
