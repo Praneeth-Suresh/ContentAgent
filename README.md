@@ -4,6 +4,23 @@ ContentAgent is a local Marketing Agent application. It accepts a software sourc
 
 The backend now has a PydanticAI-only live model gateway for production provider calls. Local development still runs without network access by using deterministic provider doubles through that same gateway, so routing, validation, retry, fallback, scoring, and ranking behavior can be tested without API keys.
 
+## System Flow
+
+```mermaid
+flowchart LR
+    A[GitHub repo or website URL] --> B[Web/API adapter]
+    B --> C[MarketingAgent core]
+    C --> D[Market research route]
+    C --> E[Campaign route]
+    C --> F[Monetization route]
+    D --> G[Validated MarketingPlan]
+    E --> G
+    F --> G
+    G --> H[Editable plan and content briefs]
+    I[Deterministic provider doubles] -. local checks .-> C
+    J[PydanticAI live gateway] -. production mode .-> C
+```
+
 ## Requirements
 
 - Python 3.10 or newer
