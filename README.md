@@ -4,6 +4,11 @@ ContentAgent is a local Marketing Agent application. It accepts a software sourc
 
 The backend now has a PydanticAI-only live model gateway for production provider calls. Local development still runs without network access by using deterministic provider doubles through that same gateway, so routing, validation, retry, fallback, scoring, and ranking behavior can be tested without API keys.
 
+**Try it without API keys:** run the [offline quickstart](#run-locally) and
+compare the response with the [worked example](#offline-example-output).
+Offline results are synthetic, so you can inspect the workflow without
+calling an external model or treating the output as market research.
+
 ## System Flow
 
 ```mermaid
@@ -66,7 +71,7 @@ Do not commit `.env` files, real keys, or provider logs containing secrets.
 From the repository root:
 
 ```bash
-python3 -m web_app.server
+CONTENT_AGENT_LIVE_MODELS=0 python3 -m web_app.server
 ```
 
 Then open:
@@ -84,7 +89,7 @@ POST /api/marketing-plan
 Example API request:
 
 ```bash
-curl -s http://127.0.0.1:8000/api/marketing-plan \
+curl -fsS http://127.0.0.1:8000/api/marketing-plan \
   -H "Content-Type: application/json" \
   -d '{
     "software_source": "https://github.com/acme/revenue-dashboard",
@@ -96,6 +101,23 @@ curl -s http://127.0.0.1:8000/api/marketing-plan \
     ]
   }'
 ```
+
+### Offline example output
+
+The request above returns HTTP 200 with a `marketing_plan` object. The
+example URL is a fictional product input; this mode does not fetch the
+repository. A short excerpt from the returned plan:
+
+| Field | Sample value |
+| --- | --- |
+| Product name | Revenue Dashboard |
+| Stages, in order | Market Research → Campaign Orchestration → Monetization Experiment → Content Generation |
+| Highest-ranked recommendation | `campaign-1` with `offer-1` (weighted score: 8) |
+| Suggested next action | Build a pilot landing section aimed at turning qualified attention into paid trials or sales calls. |
+
+The plan also contains editable Markdown, briefs, and provider-attempt
+records. The scores demonstrate the ranking logic; they are not measured
+conversion rates.
 
 ## Run Checks
 
